@@ -5,6 +5,7 @@ use core::cmp::Ordering;
 use core::mem::size_of;
 use core::mem::ManuallyDrop;
 use core::num::NonZeroUsize;
+use core::ptr;
 
 use crate::{NonEmptyMutSlice, NonEmptySlice};
 
@@ -54,6 +55,15 @@ const _BUILTIN_TRAITS: () = {
     impl<'a, T> AsRef<[T]> for NonEmptyVec<'a, T> {
         fn as_ref(&self) -> &[T] {
             self.as_slice()
+        }
+    }
+
+    impl<'a, T> Drop for NonEmptyVec<'a, T> {
+        fn drop(&mut self) {
+            unsafe {
+                // Same code path as `Vec::drop`.
+                ptr::drop_in_place(ptr::slice_from_raw_parts_mut(self.as_mut_ptr(), self.len().get()))
+            }
         }
     }
 };
