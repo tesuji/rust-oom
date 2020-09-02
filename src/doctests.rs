@@ -7,4 +7,4 @@
 /// drop(vec);
 /// let dangling = bad.first();
 /// ```
-extern {}
+extern "C" {}
