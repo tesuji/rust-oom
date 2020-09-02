@@ -22,3 +22,6 @@ pub use slice::unique::NonEmptyMutSlice;
 
 #[cfg(feature = "vec")]
 pub use vec::NonEmptyVec;
+
+#[cfg(doctest)]
+mod doctests;
