@@ -26,7 +26,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `Security` in case of vulnerabilities.
 -->
 
-## [v0.1.0] - 2020-09-02
+## [v0.2.0] - 2020-09-02
+
+### Breaking changes
+
+* Remove `NonEmptySlice::fist_mut` (unsound). It is slipped through experimental
+  through I intended to remove it.
+* Boundless lifetime with `impl<'a, T> for NonEmptyVec`. Thanks @HeroicKatora for reporting
+  and helping me adding tests for it.
+
+## [v0.1.0] - 2020-09-02 (yanked)
 
 ### Add
 
@@ -38,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Remove `Clone` impl for `NonEmptyMutSlice`.
   It is kinda unsound for multiple mutable references.
 
-## [v0.0.1] - 2020-09-02
+## [v0.0.1] - 2020-09-02 (yanked)
 
 First release
 
