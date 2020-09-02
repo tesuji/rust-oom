@@ -27,39 +27,39 @@ const _SIZE: () = {
 };
 
 const _BUILTIN_TRAITS: () = {
-    impl<'a, T: Clone> Clone for NonEmptyVec<T> {
+    impl<T: Clone> Clone for NonEmptyVec<T> {
         fn clone(&self) -> Self {
             Self::from_vec(self.to_vec())
         }
     }
 
-    impl<'a, T: Eq> Eq for NonEmptyVec<T> {}
+    impl<T: Eq> Eq for NonEmptyVec<T> {}
 
-    impl<'a, T: PartialEq> PartialEq for NonEmptyVec<T> {
+    impl<T: PartialEq> PartialEq for NonEmptyVec<T> {
         fn eq(&self, other: &Self) -> bool {
             self.as_slice().eq(other.as_slice())
         }
     }
 
-    impl<'a, T: Ord> Ord for NonEmptyVec<T> {
+    impl<T: Ord> Ord for NonEmptyVec<T> {
         fn cmp(&self, other: &Self) -> Ordering {
             self.as_slice().cmp(other.as_slice())
         }
     }
 
-    impl<'a, T: PartialOrd> PartialOrd for NonEmptyVec<T> {
+    impl<T: PartialOrd> PartialOrd for NonEmptyVec<T> {
         fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
             self.as_slice().partial_cmp(other.as_slice())
         }
     }
 
-    impl<'a, T> AsRef<[T]> for NonEmptyVec<T> {
+    impl<T> AsRef<[T]> for NonEmptyVec<T> {
         fn as_ref(&self) -> &[T] {
             self.as_slice()
         }
     }
 
-    impl<'a, T> Drop for NonEmptyVec<T> {
+    impl<T> Drop for NonEmptyVec<T> {
         fn drop(&mut self) {
             unsafe {
                 // Same code path as `Vec::drop`.
