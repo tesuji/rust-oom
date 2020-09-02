@@ -48,6 +48,8 @@ fn test_muts() {
     let v = vec![1, 2, 3];
     let v = NonEmptyVec::from_vec_checked(v).unwrap();
     assert_eq!(v.as_slice(), &[1, 2, 3]);
+    drop(v);
+    drop(v);
 
     let v = Vec::<u32>::with_capacity(42);
     match NonEmptyVec::from_vec_checked(v) {
