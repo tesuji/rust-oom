@@ -1,4 +1,4 @@
-use oom::{NonEmptyVec, NonEmptySlice};
+use oom::{NonEmptySlice, NonEmptyVec};
 
 fn main() {
     let vec = NonEmptyVec::<u8>::from_vec(vec![0]);

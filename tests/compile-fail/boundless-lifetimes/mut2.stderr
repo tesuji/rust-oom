@@ -1,0 +1,9 @@
+error[E0499]: cannot borrow `slice` as mutable more than once at a time
+ --> $DIR/mut2.rs:5:18
+  |
+4 |     let first = slice.first_mut();
+  |                 ----- first mutable borrow occurs here
+5 |     let second = slice.first_mut();
+  |                  ^^^^^ second mutable borrow occurs here
+6 |     assert_eq!(first as *mut _, second as *mut _);
+  |                ----- first borrow later used here

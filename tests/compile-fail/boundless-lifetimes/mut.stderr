@@ -9,6 +9,17 @@ error[E0597]: `foo` does not live long enough
 8 | }
   | - `foo` dropped here while still borrowed
 
+error[E0597]: `s` does not live long enough
+ --> $DIR/mut.rs:5:29
+  |
+5 |     let bad: &'static [_] = s.as_mut_slice();
+  |              ------------   ^ borrowed value does not live long enough
+  |              |
+  |              type annotation requires that `s` is borrowed for `'static`
+...
+8 | }
+  | - `s` dropped here while still borrowed
+
 error[E0505]: cannot move out of `foo` because it is borrowed
  --> $DIR/mut.rs:6:10
   |

@@ -78,7 +78,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: rustup toolchain install stable -c rustfmt
-      - run: cargo fmt -- --check
+      - run: |
+          cargo fmt -- --check
+          # compile-fail tests are skipped by `cargo fmt`.
+          git ls-files 'tests/*.rs' | xargs rustfmt --check
 
   clippy:
     runs-on: ubuntu-latest
