@@ -104,4 +104,4 @@ jobs:
           echo "Installing latest nightly with Miri: $MIRI_NIGHTLY"
           rustup toolchain install "$MIRI_NIGHTLY" -c miri
           rustup default "$MIRI_NIGHTLY"
-      - run: cargo miri test
+      - run: cargo miri test --all-features

@@ -26,7 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `Security` in case of vulnerabilities.
  -->
 
-## [0.1.0] - 2020-09-02
+## [v0.1.0] - 2020-09-02
+
 ### Add
 
 * `NonEmptyVec`
@@ -37,9 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Remove `Clone` impl for `NonEmptyMutSlice`.
   It is kinda unsound for multiple mutable references.
 
-## [0.0.1] - 2020-09-02
+## [v0.0.1] - 2020-09-02
 
 First release
 
-[0.1.0]: https://github.com/lzutao/rust-oom/compare/v0.0.1...v0.1.0
-[0.0.1]: https://github.com/lzutao/rust-oom/releases/tag/v0.0.1
+[v0.1.0]: https://github.com/lzutao/rust-oom/compare/v0.0.1...v0.1.0
+[v0.0.1]: https://github.com/lzutao/rust-oom/releases/tag/v0.0.1
