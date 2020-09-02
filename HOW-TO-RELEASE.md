@@ -16,7 +16,7 @@
 6. Create tag and publish to remote
 
   ```bash
-  VER_NUM=0.x.x
+  VER_NUM=v0.x.x
   git tag -as ${VER_NUM} -m ${VER_NUM}
   git push origin master
   git push origin ${VER_NUM}
