@@ -22,16 +22,6 @@ const _SIZE: () = {
 };
 
 const _BUILTIN_TRAITS: () = {
-    impl<'a, T: Clone> Clone for NonEmptyMutSlice<'a, T> {
-        fn clone(&self) -> Self {
-            Self {
-                ptr: self.ptr,
-                len: self.len,
-                lt: self.lt,
-            }
-        }
-    }
-
     impl<'a, T: Eq> Eq for NonEmptyMutSlice<'a, T> {}
 
     impl<'a, T: PartialEq> PartialEq for NonEmptyMutSlice<'a, T> {

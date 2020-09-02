@@ -1,6 +1,8 @@
 extern crate alloc;
 
 use alloc::vec::Vec;
+use core::cmp::Ordering;
+use core::mem::size_of;
 use core::mem::ManuallyDrop;
 use core::num::NonZeroUsize;
 
@@ -11,6 +13,50 @@ pub struct NonEmptyVec<'a, T: Sized> {
     inner: NonEmptyMutSlice<'a, T>,
     cap: NonZeroUsize,
 }
+
+const _SIZE: () = {
+    const FOO: [(); 1] = [()];
+    const SIZE: usize = size_of::<NonEmptyVec<'_, &str>>();
+    #[cfg(target_pointer_width = "64")]
+    let idx = !(SIZE == 24) as usize;
+    #[cfg(target_pointer_width = "32")]
+    let idx = !(SIZE == 12) as usize;
+    FOO[idx]
+};
+
+const _BUILTIN_TRAITS: () = {
+    impl<'a, T: Clone> Clone for NonEmptyVec<'a, T> {
+        fn clone(&self) -> Self {
+            Self::from_vec(self.to_vec())
+        }
+    }
+
+    impl<'a, T: Eq> Eq for NonEmptyVec<'a, T> {}
+
+    impl<'a, T: PartialEq> PartialEq for NonEmptyVec<'a, T> {
+        fn eq(&self, other: &Self) -> bool {
+            self.as_slice().eq(other.as_slice())
+        }
+    }
+
+    impl<'a, T: Ord> Ord for NonEmptyVec<'a, T> {
+        fn cmp(&self, other: &Self) -> Ordering {
+            self.as_slice().cmp(other.as_slice())
+        }
+    }
+
+    impl<'a, T: PartialOrd> PartialOrd for NonEmptyVec<'a, T> {
+        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+            self.as_slice().partial_cmp(other.as_slice())
+        }
+    }
+
+    impl<'a, T> AsRef<[T]> for NonEmptyVec<'a, T> {
+        fn as_ref(&self) -> &[T] {
+            self.as_slice()
+        }
+    }
+};
 
 impl<'a, T: Sized> NonEmptyVec<'a, T> {
     /// Converts a `Vec<T>` into a `NonEmptyVec`.

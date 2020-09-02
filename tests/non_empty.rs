@@ -1,4 +1,4 @@
-use oom::NonEmptyMutSlice;
+use oom::{NonEmptyMutSlice, NonEmptyVec};
 use std::path::Path;
 
 #[test]
@@ -43,5 +43,15 @@ fn test_muts() {
         rest[0] = 42;
         rest[1] = 42;
         assert_eq!(s.as_slice(), &[42, 42, 0][..]);
+    }
+
+    let v = vec![1, 2, 3];
+    let v = NonEmptyVec::from_vec_checked(v).unwrap();
+    assert_eq!(v.as_slice(), &[1, 2, 3]);
+
+    let v = Vec::<u32>::with_capacity(42);
+    match NonEmptyVec::from_vec_checked(v) {
+        Ok(_) => panic!("slice is empty"),
+        Err(v) => assert!(v.is_empty()),
     }
 }

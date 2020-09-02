@@ -34,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking changes
 
 * `as_mut_ptr` and `as_mut_slice` now require `&mut self`.
+* Remove `Clone` impl for `NonEmptyMutSlice`.
+  It is kinda unsound for multiple mutable references.
 
 ## [0.0.1] - 2020-09-02
 
