@@ -44,9 +44,9 @@ jobs:
       - run: |
           rustup toolchain install stable-${{ matrix.target }}
           rustup default stable-${{ matrix.target }}
-      - run: cargo build
-      - run: cargo build --all-targets
-      - run: cargo test
+      - run: cargo build --all-features
+      - run: cargo build --all-targets --all-features
+      - run: cargo test --all-features
 
   rustdoc:
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
       - run: |
           rustup toolchain install nightly
           rustup default nightly
-      - run: cargo doc --all --no-deps # --document-private-items
+      - run: cargo doc --all-features --no-deps # --document-private-items
       - name: Commit docs to gh-pages branch
         working-directory: target/doc
         run: |
@@ -91,7 +91,7 @@ jobs:
       - run: |
           cargo check --all --all-targets
           git ls-files '*.rs' | xargs touch
-      - run: cargo clippy --all --all-targets -- -Dwarnings
+      - run: cargo clippy --all-targets --all-features -- -Dwarnings
 
   ## NOTE: `miri` does not run doc-tests: <https://github.com/rust-lang/miri/issues/584>.
   miri:
