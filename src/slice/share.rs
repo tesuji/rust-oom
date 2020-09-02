@@ -130,19 +130,6 @@ impl<'a, T: Sized> NonEmptySlice<'a, T> {
         unsafe { &*(self.ptr) }
     }
 
-    /// Returns a mutable pointer to the first element of the slice.
-    ///
-    /// ```
-    /// # use oom::NonEmptySlice;
-    /// let arr = &mut [10, 40, 30];
-    /// let mut s = NonEmptySlice::from_slice(arr);
-    /// *s.first_mut() = 42;
-    /// assert_eq!(arr, &[42, 40, 30]);
-    /// ```
-    pub fn first_mut(&mut self) -> &'a mut T {
-        unsafe { &mut *(self.ptr as *mut T) }
-    }
-
     /// Returns the last element of the slice.
     ///
     /// ```
