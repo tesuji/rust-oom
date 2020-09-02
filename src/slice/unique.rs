@@ -4,7 +4,7 @@ use core::mem::size_of;
 use core::num::NonZeroUsize;
 use core::slice;
 
-/// An non-empty mutable slice type, counterpart of `&mut [T]`.
+/// A non-empty mutable slice type, counterpart of `&mut [T]`.
 pub struct NonEmptyMutSlice<'a, T: Sized> {
     ptr: *mut T,
     len: NonZeroUsize,
@@ -60,13 +60,17 @@ const _BUILTIN_TRAITS: () = {
 };
 
 impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
-    /// Converts a `&T` into a `NonEmptyMutSlice`.
-    pub fn from_mut(e: &'a mut T) -> Self {
+    pub(crate) unsafe fn from_raw_parts_mut(ptr: *mut T, len: usize) -> Self {
         Self {
-            ptr: e as *mut T,
-            len: unsafe { NonZeroUsize::new_unchecked(1) },
+            ptr,
+            len: NonZeroUsize::new_unchecked(len),
             lt: PhantomData,
         }
+    }
+
+    /// Converts a `&T` into a `NonEmptyMutSlice`.
+    pub fn from_mut(e: &'a mut T) -> Self {
+        unsafe { Self::from_raw_parts_mut(e as *mut T, 1) }
     }
 
     /// Converts a `&[T]` into a `NonEmptyMutSlice`.
@@ -86,12 +90,8 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
         }
 
         let ptr = slice.as_mut_ptr();
-        let len = unsafe { NonZeroUsize::new_unchecked(slice.len()) };
-        Some(Self {
-            ptr,
-            len,
-            lt: PhantomData,
-        })
+        let len = slice.len();
+        Some(unsafe { Self::from_raw_parts_mut(ptr, len) })
     }
 
     /// Returns a raw pointer to the slice's buffer.
