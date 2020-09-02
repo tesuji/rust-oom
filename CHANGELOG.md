@@ -26,6 +26,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `Security` in case of vulnerabilities.
 -->
 
+## [v0.3.0] - 2020-09-02
+
+### Breaking changes
+
+* `NonEmptySlice::from_ref` is not a const fn anymore, due to a refactoring.
+
+## Security
+
+* Fix multiple mutable aliases in `NonEmptyMutSlice::first_mut`. Thyanks @HeroicKatora again.
+
 ## [v0.2.0] - 2020-09-02
 
 ### Breaking changes

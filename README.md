@@ -54,7 +54,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-oom = "0.2.0"
+oom = "0.3.0"
 ```
 
 Or assuming you installed [`cargo-edit`][edit], use:
