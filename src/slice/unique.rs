@@ -57,6 +57,9 @@ const _BUILTIN_TRAITS: () = {
             self.as_slice()
         }
     }
+
+    unsafe impl<'a, T: Send> Send for NonEmptyMutSlice<'a, T> {}
+    unsafe impl<'a, T: Sync> Sync for NonEmptyMutSlice<'a, T> {}
 };
 
 impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
