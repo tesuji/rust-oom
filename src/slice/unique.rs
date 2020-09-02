@@ -1,14 +1,12 @@
 use core::cmp::Ordering;
-use core::marker::PhantomData;
+use core::hint::unreachable_unchecked;
 use core::mem::size_of;
 use core::num::NonZeroUsize;
 use core::slice;
 
 /// A non-empty mutable slice type, counterpart of `&mut [T]`.
 pub struct NonEmptyMutSlice<'a, T: Sized> {
-    ptr: *mut T,
-    len: NonZeroUsize,
-    lt: PhantomData<&'a mut T>,
+    pub(crate) inner: &'a mut [T],
 }
 
 const _SIZE: () = {
@@ -47,23 +45,14 @@ const _BUILTIN_TRAITS: () = {
             self.as_slice()
         }
     }
-
-    unsafe impl<'a, T: Send> Send for NonEmptyMutSlice<'a, T> {}
-    unsafe impl<'a, T: Sync> Sync for NonEmptyMutSlice<'a, T> {}
 };
 
 impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
-    pub(crate) unsafe fn from_raw_parts_mut(ptr: *mut T, len: usize) -> Self {
-        Self {
-            ptr,
-            len: NonZeroUsize::new_unchecked(len),
-            lt: PhantomData,
-        }
-    }
-
     /// Converts a `&T` into a `NonEmptyMutSlice`.
     pub fn from_mut(e: &'a mut T) -> Self {
-        unsafe { Self::from_raw_parts_mut(e as *mut T, 1) }
+        Self {
+            inner: slice::from_mut(e),
+        }
     }
 
     /// Converts a `&[T]` into a `NonEmptyMutSlice`.
@@ -82,14 +71,12 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
             return None;
         }
 
-        let ptr = slice.as_mut_ptr();
-        let len = slice.len();
-        Some(unsafe { Self::from_raw_parts_mut(ptr, len) })
+        Some(Self { inner: slice })
     }
 
     /// Returns a raw pointer to the slice's buffer.
     pub fn as_ptr(&self) -> *const T {
-        self.ptr
+        self.inner.as_ptr()
     }
 
     /// Returns an unsafe mutable pointer to the slice's buffer.
@@ -97,22 +84,22 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
     /// The caller must ensure that the slice outlives the pointer
     /// this function returns, or else it will end up pointing to garbage.
     pub fn as_mut_ptr(&mut self) -> *mut T {
-        self.ptr
+        self.inner.as_mut_ptr()
     }
 
     /// Returns a `&[T]` containing entire `NonEmptyMutSlice`.
-    pub fn as_slice(&self) -> &'a [T] {
-        unsafe { slice::from_raw_parts(self.ptr as *const T, self.len.get()) }
+    pub fn as_slice(&self) -> &[T] {
+        self.inner
     }
 
     /// Returns a mutable slice from this type.
-    pub fn as_mut_slice(&mut self) -> &'a mut [T] {
-        unsafe { slice::from_raw_parts_mut(self.ptr, self.len.get()) }
+    pub fn as_mut_slice(&mut self) -> &mut [T] {
+        self.inner
     }
 
     /// Returns the number of elements in the slice.
     pub fn len(&self) -> NonZeroUsize {
-        self.len
+        unsafe { NonZeroUsize::new_unchecked(self.inner.len()) }
     }
 
     /// Always returns `false` because the slice is non-empty.
@@ -128,8 +115,11 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
     /// let s = NonEmptyMutSlice::from_slice(arr);
     /// assert_eq!(s.first(), &10);
     /// ```
-    pub fn first(&self) -> &'a T {
-        unsafe { &*(self.ptr) }
+    pub fn first(&self) -> &T {
+        match self.inner {
+            [ref first, ..] => first,
+            [] => unsafe { unreachable_unchecked() },
+        }
     }
 
     /// Returns a mutable pointer to the first element of the slice.
@@ -141,8 +131,11 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
     /// *s.first_mut() = 42;
     /// assert_eq!(arr, &[42, 40, 30]);
     /// ```
-    pub fn first_mut(&mut self) -> &'a mut T {
-        unsafe { &mut *(self.ptr) }
+    pub fn first_mut(&mut self) -> &mut T {
+        match self.inner {
+            [first, ..] => first,
+            [] => unsafe { unreachable_unchecked() },
+        }
     }
 
     /// Returns the last element of the slice.
@@ -153,9 +146,11 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
     /// let s = NonEmptyMutSlice::from_slice(arr);
     /// assert_eq!(s.last(), &30);
     /// ```
-    pub fn last(&self) -> &'a T {
-        let last_idx = self.len.get() - 1;
-        unsafe { &*(self.ptr.add(last_idx)) }
+    pub fn last(&self) -> &T {
+        match self.inner {
+            [.., ref last] => last,
+            [] => unsafe { unreachable_unchecked() },
+        }
     }
 
     /// Returns the last element of the slice.
@@ -167,9 +162,11 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
     /// *s.last_mut() = 42;
     /// assert_eq!(arr, &[10, 40, 42]);
     /// ```
-    pub fn last_mut(&mut self) -> &'a mut T {
-        let last_idx = self.len.get() - 1;
-        unsafe { &mut *(self.ptr.add(last_idx)) }
+    pub fn last_mut(&mut self) -> &mut T {
+        match self.inner {
+            [.., last] => last,
+            [] => unsafe { unreachable_unchecked() },
+        }
     }
 
     /// Returns the first and all the rest of the elements of the slice.
@@ -180,15 +177,11 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
     /// let s = NonEmptyMutSlice::from_slice(arr);
     /// assert_eq!(s.split_first(), (&10, &[40, 30][..]));
     /// ```
-    pub fn split_first(&self) -> (&'a T, &'a [T]) {
-        let ptr = self.ptr;
-        let first = unsafe { &*ptr };
-        let rest = unsafe {
-            let ptr = ptr.add(1);
-            let len = self.len().get() - 1;
-            slice::from_raw_parts(ptr, len)
-        };
-        (first, rest)
+    pub fn split_first(&self) -> (&T, &[T]) {
+        match self.inner {
+            [ref first, ref rest @ ..] => (first, rest),
+            [] => unsafe { unreachable_unchecked() },
+        }
     }
 
     /// Returns the first and all the rest of the elements of the slice.
@@ -203,15 +196,11 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
     /// rest[1] = 5;
     /// assert_eq!(arr, &[3, 4, 5]);
     /// ```
-    pub fn split_first_mut(&mut self) -> (&'a mut T, &'a mut [T]) {
-        let ptr = self.ptr;
-        let first = unsafe { &mut *ptr };
-        let rest = unsafe {
-            let ptr = ptr.add(1);
-            let len = self.len().get() - 1;
-            slice::from_raw_parts_mut(ptr, len)
-        };
-        (first, rest)
+    pub fn split_first_mut(&mut self) -> (&mut T, &mut [T]) {
+        match self.inner {
+            [first, rest @ ..] => (first, rest),
+            [] => unsafe { unreachable_unchecked() },
+        }
     }
 
     /// Returns the last and all the rest of the elements of the slice.
@@ -222,12 +211,11 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
     /// let s = NonEmptyMutSlice::from_slice(arr);
     /// assert_eq!(s.split_last(), (&30, &[10, 40][..]));
     /// ```
-    pub fn split_last(&self) -> (&'a T, &'a [T]) {
-        let ptr = self.ptr;
-        let len = self.len().get() - 1;
-        let rest = unsafe { slice::from_raw_parts(ptr, len) };
-        let last = unsafe { &*(ptr.add(len)) };
-        (last, rest)
+    pub fn split_last(&self) -> (&T, &[T]) {
+        match self.inner {
+            [ref rest @ .., ref last] => (last, rest),
+            [] => unsafe { unreachable_unchecked() },
+        }
     }
 
     /// Returns the last and all the rest of the elements of the slice.
@@ -242,11 +230,10 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
     /// rest[1] = 5;
     /// assert_eq!(arr, &[4, 5, 3]);
     /// ```
-    pub fn split_last_mut(&mut self) -> (&'a mut T, &'a mut [T]) {
-        let ptr = self.ptr;
-        let len = self.len().get() - 1;
-        let rest = unsafe { slice::from_raw_parts_mut(ptr, len) };
-        let last = unsafe { &mut *(ptr.add(len)) };
-        (last, rest)
+    pub fn split_last_mut(&mut self) -> (&mut T, &mut [T]) {
+        match self.inner {
+            [rest @ .., last] => (last, rest),
+            [] => unsafe { unreachable_unchecked() },
+        }
     }
 }

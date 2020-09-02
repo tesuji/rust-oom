@@ -1,14 +1,12 @@
 use core::cmp::Ordering;
-use core::marker::PhantomData;
+use core::hint::unreachable_unchecked;
 use core::mem::size_of;
 use core::num::NonZeroUsize;
 use core::slice;
 
 /// A non-empty slice type, counterpart of `&[T]`.
 pub struct NonEmptySlice<'a, T: Sized> {
-    ptr: *const T,
-    len: NonZeroUsize,
-    lt: PhantomData<&'a T>,
+    pub(crate) inner: &'a [T],
 }
 
 const _SIZE: () = {
@@ -24,11 +22,7 @@ const _SIZE: () = {
 const _BUILTIN_TRAITS: () = {
     impl<'a, T: Clone> Clone for NonEmptySlice<'a, T> {
         fn clone(&self) -> Self {
-            Self {
-                ptr: self.ptr,
-                len: self.len,
-                lt: self.lt,
-            }
+            Self { inner: self.inner }
         }
     }
 
@@ -59,23 +53,14 @@ const _BUILTIN_TRAITS: () = {
             self.as_slice()
         }
     }
-
-    unsafe impl<'a, T: Send> Send for NonEmptySlice<'a, T> {}
-    unsafe impl<'a, T: Sync> Sync for NonEmptySlice<'a, T> {}
 };
 
 impl<'a, T: Sized> NonEmptySlice<'a, T> {
-    pub(crate) const unsafe fn from_raw_parts(ptr: *const T, len: usize) -> Self {
-        Self {
-            ptr,
-            len: NonZeroUsize::new_unchecked(len),
-            lt: PhantomData,
-        }
-    }
-
     /// Converts a `&T` into a `NonEmptySlice`.
-    pub const fn from_ref(e: &'a T) -> Self {
-        unsafe { Self::from_raw_parts(e as *const T, 1) }
+    pub fn from_ref(e: &'a T) -> Self {
+        Self {
+            inner: slice::from_ref(e),
+        }
     }
 
     /// Converts a `&[T]` into a `NonEmptySlice`.
@@ -94,24 +79,22 @@ impl<'a, T: Sized> NonEmptySlice<'a, T> {
             return None;
         }
 
-        let ptr = slice.as_ptr();
-        let len = slice.len();
-        Some(unsafe { Self::from_raw_parts(ptr, len) })
+        Some(Self { inner: slice })
     }
 
     /// Returns a raw pointer to the slice's buffer.
     pub fn as_ptr(&self) -> *const T {
-        self.ptr
+        self.inner.as_ptr()
     }
 
     /// Returns a `&[T]` containing entire `NonEmptySlice`.
-    pub fn as_slice(&self) -> &'a [T] {
-        unsafe { slice::from_raw_parts(self.ptr, self.len.get()) }
+    pub fn as_slice(&self) -> &[T] {
+        self.inner
     }
 
     /// Returns the number of elements in the slice.
     pub const fn len(&self) -> NonZeroUsize {
-        self.len
+        unsafe { NonZeroUsize::new_unchecked(self.inner.len()) }
     }
 
     /// Always returns `false` because the slice is non-empty.
@@ -126,8 +109,11 @@ impl<'a, T: Sized> NonEmptySlice<'a, T> {
     /// let s = NonEmptySlice::from_slice(&[10, 40, 30]);
     /// assert_eq!(s.first(), &10);
     /// ```
-    pub fn first(&self) -> &'a T {
-        unsafe { &*(self.ptr) }
+    pub fn first(&self) -> &T {
+        match self.inner {
+            [first, ..] => first,
+            [] => unsafe { unreachable_unchecked() },
+        }
     }
 
     /// Returns the last element of the slice.
@@ -137,9 +123,11 @@ impl<'a, T: Sized> NonEmptySlice<'a, T> {
     /// let s = NonEmptySlice::from_slice(&[10, 40, 30]);
     /// assert_eq!(s.last(), &30);
     /// ```
-    pub fn last(&self) -> &'a T {
-        let last_idx = self.len.get() - 1;
-        unsafe { &*(self.ptr.add(last_idx)) }
+    pub fn last(&self) -> &T {
+        match self.inner {
+            [.., last] => last,
+            [] => unsafe { unreachable_unchecked() },
+        }
     }
 
     /// Returns the first and all the rest of the elements of the slice.
@@ -149,15 +137,11 @@ impl<'a, T: Sized> NonEmptySlice<'a, T> {
     /// let s = NonEmptySlice::from_slice(&[10, 40, 30]);
     /// assert_eq!(s.split_first(), (&10, &[40, 30][..]));
     /// ```
-    pub fn split_first(&self) -> (&'a T, &'a [T]) {
-        let ptr = self.ptr;
-        let first = unsafe { &*ptr };
-        let rest = unsafe {
-            let ptr = ptr.add(1);
-            let len = self.len().get() - 1;
-            slice::from_raw_parts(ptr, len)
-        };
-        (first, rest)
+    pub fn split_first(&self) -> (&T, &[T]) {
+        match self.inner {
+            [first, rest @ ..] => (first, rest),
+            [] => unsafe { unreachable_unchecked() },
+        }
     }
 
     /// Returns the last and all the rest of the elements of the slice.
@@ -167,11 +151,10 @@ impl<'a, T: Sized> NonEmptySlice<'a, T> {
     /// let s = NonEmptySlice::from_slice(&[10, 40, 30]);
     /// assert_eq!(s.split_last(), (&30, &[10, 40][..]));
     /// ```
-    pub fn split_last(&self) -> (&'a T, &'a [T]) {
-        let ptr = self.ptr;
-        let len = self.len().get() - 1;
-        let rest = unsafe { slice::from_raw_parts(ptr, len) };
-        let last = unsafe { &*(ptr.add(len)) };
-        (last, rest)
+    pub fn split_last(&self) -> (&T, &[T]) {
+        match self.inner {
+            [rest @ .., last] => (last, rest),
+            [] => unsafe { unreachable_unchecked() },
+        }
     }
 }
