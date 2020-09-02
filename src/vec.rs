@@ -137,7 +137,7 @@ impl<T: Sized> NonEmptyVec<T> {
         self.as_slice().to_vec()
     }
 
-    /// A shorthand for [`NonEmptyMutSlice::first`].
+    /// Returns the first element of the slice.
     pub fn first(&self) -> &T {
         match self.as_slice() {
             [first, ..] => first,
@@ -145,7 +145,7 @@ impl<T: Sized> NonEmptyVec<T> {
         }
     }
 
-    /// A shorthand for [`NonEmptyMutSlice::first_mut`].
+    /// Returns a mutable pointer to the first element of the slice.
     pub fn first_mut(&mut self) -> &mut T {
         match self.as_mut_slice() {
             [first, ..] => first,
@@ -153,7 +153,7 @@ impl<T: Sized> NonEmptyVec<T> {
         }
     }
 
-    /// A shorthand for [`NonEmptyMutSlice::last`].
+    /// Returns the last element of the slice.
     pub fn last(&self) -> &T {
         match self.as_slice() {
             [.., last] => last,
@@ -161,7 +161,7 @@ impl<T: Sized> NonEmptyVec<T> {
         }
     }
 
-    /// A shorthand for [`NonEmptyMutSlice::last_mut`].
+    /// Returns the last element of the slice.
     pub fn last_mut(&mut self) -> &mut T {
         match self.as_mut_slice() {
             [.., last] => last,
@@ -169,7 +169,7 @@ impl<T: Sized> NonEmptyVec<T> {
         }
     }
 
-    /// A shorthand for [`NonEmptyMutSlice::split_first`].
+    /// Returns the first and all the rest of the elements of the slice.
     pub fn split_first(&self) -> (&T, &[T]) {
         match self.as_slice() {
             [first, rest @ ..] => (first, rest),
@@ -177,7 +177,7 @@ impl<T: Sized> NonEmptyVec<T> {
         }
     }
 
-    /// A shorthand for [`NonEmptyMutSlice::split_first_mut`].
+    /// Returns the first and all the rest of the elements of the slice.
     pub fn split_first_mut(&mut self) -> (&mut T, &mut [T]) {
         match self.as_mut_slice() {
             [first, rest @ ..] => (first, rest),
@@ -185,7 +185,7 @@ impl<T: Sized> NonEmptyVec<T> {
         }
     }
 
-    /// A shorthand for [`NonEmptyMutSlice::split_last`].
+    /// Returns the last and all the rest of the elements of the slice.
     pub fn split_last(&self) -> (&T, &[T]) {
         match self.as_slice() {
             [rest @ .., last] => (last, rest),
@@ -193,7 +193,7 @@ impl<T: Sized> NonEmptyVec<T> {
         }
     }
 
-    /// A shorthand for [`NonEmptyMutSlice::split_last_mut`].
+    /// Returns the last and all the rest of the elements of the slice.
     pub fn split_last_mut(&mut self) -> (&mut T, &mut [T]) {
         match self.as_mut_slice() {
             [rest @ .., last] => (last, rest),
