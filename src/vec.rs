@@ -68,7 +68,7 @@ const _BUILTIN_TRAITS: () = {
     }
 };
 
-impl<'a, T: Sized> NonEmptyVec<T> {
+impl<T: Sized> NonEmptyVec<T> {
     /// Converts a `Vec<T>` into a `NonEmptyVec`.
     ///
     /// # Panics
@@ -105,26 +105,26 @@ impl<'a, T: Sized> NonEmptyVec<T> {
     }
 
     /// Returns a non-empty slice from this vec.
-    pub fn as_nonempty_slice(&self) -> NonEmptySlice<'a, T> {
+    pub fn as_nonempty_slice<'a>(&'a self) -> NonEmptySlice<'a, T> {
         let ptr = self.as_ptr();
         let len = self.len().get();
         unsafe { NonEmptySlice::from_raw_parts(ptr, len) }
     }
 
     /// Returns a non-empty mutable slice from this vec.
-    pub fn as_nonempty_mut_slice(&mut self) -> NonEmptyMutSlice<'a, T> {
+    pub fn as_nonempty_mut_slice<'a>(&'a mut self) -> NonEmptyMutSlice<'a, T> {
         let ptr = self.as_mut_ptr();
         let len = self.len().get();
         unsafe { NonEmptyMutSlice::from_raw_parts_mut(ptr, len) }
     }
 
     /// Extracts a slice containing the entire vector.
-    pub fn as_slice(&self) -> &'a [T] {
+    pub fn as_slice<'a>(&'a self) -> &'a [T] {
         self.as_nonempty_slice().as_slice()
     }
 
     /// Extracts a mutable slice of the entire vector.
-    pub fn as_mut_slice(&mut self) -> &'a mut [T] {
+    pub fn as_mut_slice<'a>(&'a mut self) -> &'a mut [T] {
         self.as_nonempty_mut_slice().as_mut_slice()
     }
 
@@ -160,42 +160,42 @@ impl<'a, T: Sized> NonEmptyVec<T> {
     }
 
     /// A shorthand for [`NonEmptyMutSlice::first`].
-    pub fn first(&self) -> &'a T {
+    pub fn first<'a>(&'a self) -> &'a T {
         self.as_nonempty_slice().first()
     }
 
     /// A shorthand for [`NonEmptyMutSlice::first_mut`].
-    pub fn first_mut(&mut self) -> &'a mut T {
+    pub fn first_mut<'a>(&'a mut self) -> &'a mut T {
         self.as_nonempty_mut_slice().first_mut()
     }
 
     /// A shorthand for [`NonEmptyMutSlice::last`].
-    pub fn last(&self) -> &'a T {
+    pub fn last<'a>(&'a self) -> &'a T {
         self.as_nonempty_slice().last()
     }
 
     /// A shorthand for [`NonEmptyMutSlice::last_mut`].
-    pub fn last_mut(&mut self) -> &'a mut T {
+    pub fn last_mut<'a>(&'a mut self) -> &'a mut T {
         self.as_nonempty_mut_slice().last_mut()
     }
 
     /// A shorthand for [`NonEmptyMutSlice::split_first`].
-    pub fn split_first(&self) -> (&'a T, &'a [T]) {
+    pub fn split_first<'a>(&'a self) -> (&'a T, &'a [T]) {
         self.as_nonempty_slice().split_first()
     }
 
     /// A shorthand for [`NonEmptyMutSlice::split_first_mut`].
-    pub fn split_first_mut(&mut self) -> (&'a mut T, &'a mut [T]) {
+    pub fn split_first_mut<'a>(&'a mut self) -> (&'a mut T, &'a mut [T]) {
         self.as_nonempty_mut_slice().split_first_mut()
     }
 
     /// A shorthand for [`NonEmptyMutSlice::split_last`].
-    pub fn split_last(&self) -> (&'a T, &'a [T]) {
+    pub fn split_last<'a>(&'a self) -> (&'a T, &'a [T]) {
         self.as_nonempty_slice().split_last()
     }
 
     /// A shorthand for [`NonEmptyMutSlice::split_last_mut`].
-    pub fn split_last_mut(&mut self) -> (&'a mut T, &'a mut [T]) {
+    pub fn split_last_mut<'a>(&'a mut self) -> (&'a mut T, &'a mut [T]) {
         self.as_nonempty_mut_slice().split_last_mut()
     }
 }
