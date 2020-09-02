@@ -10,7 +10,12 @@ More introduction is in the README.
 #![doc(html_root_url = "https://docs.rs/oom/0.0.1")]
 #![warn(rust_2018_idioms)]
 
+#[cfg(feature = "slice")]
 mod slice;
+#[cfg(feature = "vec")]
+mod vec;
 
+#[cfg(feature = "slice")]
 pub use slice::share::NonEmptySlice;
+#[cfg(feature = "slice")]
 pub use slice::unique::NonEmptyMutSlice;

@@ -20,16 +20,16 @@ description = "One or Many types (Haskell NonEmpty)"
 targets = ["x86_64-unknown-linux-gnu"]
 
 [features]
-#default = ["slice"]
-# std = ["vec"]
-#slice = []
-
-# iter = []
-# array = []
+default = ["slice"]
+std = ["vec"]
+slice = []
 ## Unresolved questions:
 ## * Does it overlap with `NonEmptyMutSlice`?
 ## * What are the semantics when `vec.pop`
-# vec = []
+vec = [ "slice" ]
+
+# iter = []
+# array = []
 ## cannot generic over tuple length
 # tuple = []
 

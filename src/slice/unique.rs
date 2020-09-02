@@ -60,13 +60,17 @@ const _BUILTIN_TRAITS: () = {
 };
 
 impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
-    /// Converts a `&T` into a `NonEmptyMutSlice`.
-    pub fn from_mut(e: &'a mut T) -> Self {
+    pub(crate) unsafe fn from_raw_parts_mut(ptr: *mut T, len: usize) -> Self {
         Self {
-            ptr: e as *mut T,
-            len: unsafe { NonZeroUsize::new_unchecked(1) },
+            ptr,
+            len,
             lt: PhantomData,
         }
+    }
+
+    /// Converts a `&T` into a `NonEmptyMutSlice`.
+    pub fn from_mut(e: &'a mut T) -> Self {
+        unsafe { Self::from_raw_parts_mut(e as *mut T, NonZeroUsize::new_unchecked(1)) }
     }
 
     /// Converts a `&[T]` into a `NonEmptyMutSlice`.
