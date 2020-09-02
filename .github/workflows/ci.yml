@@ -89,7 +89,7 @@ jobs:
           rustup toolchain install nightly -c clippy
           rustup default nightly
       - run: |
-          cargo check --all --all-targets
+          cargo check --all-targets --all-features
           git ls-files '*.rs' | xargs touch
       - run: cargo clippy --all-targets --all-features -- -Dwarnings
 
