@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * `NonEmptySlice::from_ref` is not a const fn anymore, due to a refactoring.
 
-## Security
+### Security
 
 * Fix multiple mutable aliases in `NonEmptyMutSlice::first_mut`. Thyanks @HeroicKatora again.
 
