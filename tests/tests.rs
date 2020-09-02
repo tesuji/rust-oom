@@ -1,3 +1,5 @@
+// Miri cannot run trybuild
+#[cfg_attr(miri, ignore)]
 #[test]
 fn test() {
     let t = trybuild::TestCases::new();
