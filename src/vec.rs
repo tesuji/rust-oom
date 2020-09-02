@@ -63,7 +63,7 @@ const _BUILTIN_TRAITS: () = {
         fn drop(&mut self) {
             unsafe {
                 // Same code path as `Vec::drop`.
-                ptr::drop_in_place(ptr::slice_from_raw_parts_mut(self.as_mut_ptr(), self.len().get()))
+                ptr::drop_in_place(ptr::slice_from_raw_parts_mut(self.ptr, self.len.get()))
             }
         }
     }
