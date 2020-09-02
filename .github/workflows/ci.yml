@@ -94,7 +94,7 @@ jobs:
       - run: |
           cargo check --all-targets --all-features
           git ls-files '*.rs' | xargs touch
-      - run: cargo clippy --all-targets --all-features -- -A clippy::needless_lifetimes -Dwarnings
+      - run: cargo clippy --all-targets --all-features -- -Dwarnings
 
   ## NOTE: `miri` does not run doc-tests: <https://github.com/rust-lang/miri/issues/584>.
   miri:
