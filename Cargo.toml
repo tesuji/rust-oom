@@ -34,3 +34,4 @@ vec = [ "slice" ]
 [dependencies]
 
 [dev-dependencies]
+trybuild = "1.0"

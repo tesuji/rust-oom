@@ -1,0 +1,20 @@
+error[E0597]: `foo` does not live long enough
+ --> $DIR/mut.rs:4:44
+  |
+4 |     let mut s = NonEmptyMutSlice::from_mut(&mut foo);
+  |                                            ^^^^^^^^ borrowed value does not live long enough
+5 |     let bad: &'static [_] = s.as_mut_slice();
+  |              ------------ type annotation requires that `foo` is borrowed for `'static`
+...
+8 | }
+  | - `foo` dropped here while still borrowed
+
+error[E0505]: cannot move out of `foo` because it is borrowed
+ --> $DIR/mut.rs:6:10
+  |
+4 |     let mut s = NonEmptyMutSlice::from_mut(&mut foo);
+  |                                            -------- borrow of `foo` occurs here
+5 |     let bad: &'static [_] = s.as_mut_slice();
+  |              ------------ type annotation requires that `foo` is borrowed for `'static`
+6 |     drop(foo);
+  |          ^^^ move out of `foo` occurs here
