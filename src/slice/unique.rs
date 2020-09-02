@@ -96,7 +96,7 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
     ///
     /// The caller must ensure that the slice outlives the pointer
     /// this function returns, or else it will end up pointing to garbage.
-    pub fn as_mut_ptr(&self) -> *mut T {
+    pub fn as_mut_ptr(&mut self) -> *mut T {
         self.ptr
     }
 
@@ -106,7 +106,7 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
     }
 
     /// Returns a mutable slice from this type.
-    pub fn as_mut_slice(&self) -> &'a mut [T] {
+    pub fn as_mut_slice(&mut self) -> &'a mut [T] {
         unsafe { slice::from_raw_parts_mut(self.ptr, self.len.get()) }
     }
 
