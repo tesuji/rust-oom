@@ -1,6 +1,6 @@
 [package]
 name = "oom"
-version = "0.0.1" # Also update `html_root_url` in lib.rs
+version = "0.1.0" # Also update `html_root_url` in lib.rs
 authors = ["Lzu Tao <taolzu@gmail.com>"]
 categories = ["no-std", "parser-implementations", "parsing"]
 documentation = "https://docs.rs/oom/*/x86_64-unknown-linux-gnu/oom/"
@@ -24,9 +24,6 @@ all-features = true
 default = ["slice"]
 std = ["vec"]
 slice = []
-## Unresolved questions:
-## * Does it overlap with `NonEmptyMutSlice`?
-## * What are the semantics when `vec.pop`
 vec = [ "slice" ]
 
 # iter = []

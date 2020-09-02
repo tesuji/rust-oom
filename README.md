@@ -6,19 +6,25 @@
 
 Took inspirations from [the "Parse, don’t validate" article][pdv].
 
-This package defines two types: `NonEmptySlice` and `NonEmptyMutSlice`.
-Note that those types are borrow types (not owned type). So you cannot
-use them without borrow contents from array, slice or `Vec`.
-Those types don't implement trait `Deref` or `DerefMut`, it is intentional to
-avoid confusion when resolving methods. If you want `&[T]`, consider using
-`as_slice` or `as_mut_slice`.
+This package defines three types: `NonEmptySlice`, `NonEmptyMutSlice`
+and `NonEmptyVec`. Those types don't implement `Deref` or `DerefMut` trait,
+it is intentional to avoid confusion when resolving methods.
+If you want `&[T]`, consider using `as_slice` or `as_mut_slice` methods.
 
-Perhaps maybe in the future we will have `NonEmptyVec`, but
-there are design questions about semantics when `vec.pop()`.
+`NonEmptySlice` and `NonEmptyMutSlice`:
 
-The size of `NonEmptySlice` and `NonEmptyMutSlice` are the same as `&[T]`.
+* are borrow types (not owned type).
+* are counterparts of `&[T]` and `&mut [T]`.
+* have same size and similar niche as `&[T]`
+* cannot be used without borrow contents from array, slice or `Vec`.
 
-The differences from `&[T]`:
+`NonEmptyVec`:
+
+* is an owned types, counterparts of `Vec<T>`.
+* doesn't have `push` and `pop` methods, because those are fallible operations.
+  I had to deal with unsafe codes that I am not confident if I want to implement them.
+
+The differences from `&[T]` and `Vec<T>`:
 * `.len()` returns std's `NonZeroUsize`.
 * `.is_empty()` is always false.
 * These methods don't return `None`:

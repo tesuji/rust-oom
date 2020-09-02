@@ -4,7 +4,7 @@ use core::mem::size_of;
 use core::num::NonZeroUsize;
 use core::slice;
 
-/// An non-empty mutable slice type, counterpart of `&mut [T]`.
+/// A non-empty mutable slice type, counterpart of `&mut [T]`.
 pub struct NonEmptyMutSlice<'a, T: Sized> {
     ptr: *mut T,
     len: NonZeroUsize,
@@ -57,6 +57,9 @@ const _BUILTIN_TRAITS: () = {
             self.as_slice()
         }
     }
+
+    unsafe impl<'a, T: Send> Send for NonEmptyMutSlice<'a, T> {}
+    unsafe impl<'a, T: Sync> Sync for NonEmptyMutSlice<'a, T> {}
 };
 
 impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
@@ -90,12 +93,8 @@ impl<'a, T: Sized> NonEmptyMutSlice<'a, T> {
         }
 
         let ptr = slice.as_mut_ptr();
-        let len = unsafe { NonZeroUsize::new_unchecked(slice.len()) };
-        Some(Self {
-            ptr,
-            len,
-            lt: PhantomData,
-        })
+        let len = slice.len();
+        Some(unsafe { Self::from_raw_parts_mut(ptr, len) })
     }
 
     /// Returns a raw pointer to the slice's buffer.

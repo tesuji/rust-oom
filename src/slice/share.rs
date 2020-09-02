@@ -4,7 +4,7 @@ use core::mem::size_of;
 use core::num::NonZeroUsize;
 use core::slice;
 
-/// An non-empty slice type, counterpart of `&[T]`.
+/// A non-empty slice type, counterpart of `&[T]`.
 pub struct NonEmptySlice<'a, T: Sized> {
     ptr: *const T,
     len: NonZeroUsize,
@@ -59,16 +59,23 @@ const _BUILTIN_TRAITS: () = {
             self.as_slice()
         }
     }
+
+    unsafe impl<'a, T: Send> Send for NonEmptySlice<'a, T> {}
+    unsafe impl<'a, T: Sync> Sync for NonEmptySlice<'a, T> {}
 };
 
 impl<'a, T: Sized> NonEmptySlice<'a, T> {
-    /// Converts a `&T` into a `NonEmptySlice`.
-    pub const fn from_ref(e: &'a T) -> Self {
+    pub(crate) const unsafe fn from_raw_parts(ptr: *const T, len: usize) -> Self {
         Self {
-            ptr: e as *const T,
-            len: unsafe { NonZeroUsize::new_unchecked(1) },
+            ptr,
+            len: NonZeroUsize::new_unchecked(len),
             lt: PhantomData,
         }
+    }
+
+    /// Converts a `&T` into a `NonEmptySlice`.
+    pub const fn from_ref(e: &'a T) -> Self {
+        unsafe { Self::from_raw_parts(e as *const T, 1) }
     }
 
     /// Converts a `&[T]` into a `NonEmptySlice`.
@@ -88,12 +95,8 @@ impl<'a, T: Sized> NonEmptySlice<'a, T> {
         }
 
         let ptr = slice.as_ptr();
-        let len = unsafe { NonZeroUsize::new_unchecked(slice.len()) };
-        Some(Self {
-            ptr,
-            len,
-            lt: PhantomData,
-        })
+        let len = slice.len();
+        Some(unsafe { Self::from_raw_parts(ptr, len) })
     }
 
     /// Returns a raw pointer to the slice's buffer.
