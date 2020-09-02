@@ -40,8 +40,7 @@ The differences from `&[T]`:
 
 ## Supported Rust versions
 
-Latest stable. Although I don't use new really new shiny features, but I don't build
-on older Rust stable versions so you should test it yourself.
+Latest stable. I use the new conditional flows in `const fn` available only in Rust v1.46.0.
 
 ## Usage
 
