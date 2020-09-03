@@ -1,4 +1,4 @@
-use oom::{NonEmptyMutSlice, NonEmptyVec};
+use oom::{NonEmptySlice, NonEmptyVec};
 use std::path::Path;
 
 #[test]
@@ -8,7 +8,7 @@ fn test_muts() {
         Path::new("/etc/nvim"),
         Path::new("/usr/share/nvim"),
     ];
-    let mut s = NonEmptyMutSlice::from_slice_checked(config_dirs).unwrap();
+    let s = NonEmptySlice::from_mut_slice_checked(config_dirs).unwrap();
 
     assert_eq!(s.len().get(), 3);
     assert_eq!(s.is_empty(), false);
@@ -27,7 +27,7 @@ fn test_muts() {
     }
 
     let arr = &mut [0, 1, 2];
-    let mut s = NonEmptyMutSlice::from_slice_checked(arr).unwrap();
+    let s = NonEmptySlice::from_mut_slice_checked(arr).unwrap();
 
     {
         let (first, rest) = s.split_first_mut();
