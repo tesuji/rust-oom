@@ -63,6 +63,22 @@ Or assuming you installed [`cargo-edit`][edit], use:
 cargo add oom
 ```
 
+## Alternatives
+
+* https://github.com/Soveu/loaf
+
+That crate uses a representation of:
+
+```rust
+#[repr(C)]
+struct Loaf<T> {
+    first: [T; 1],
+    rest: [T],
+}
+```
+
+and use `&Loaf<T>` or `&mut Loaf` at runtime.
+
 ## Thanks for inspirations from
 
 * https://github.com/cloudhead/nonempty (MIT license)

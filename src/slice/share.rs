@@ -4,6 +4,10 @@ use core::mem::size_of;
 use core::num::NonZeroUsize;
 use core::slice;
 
+// FIXME: Use unsized `[T]` as inner type (see loaf crate)
+// and return `&NonEmptySlice` or `&mut NonEmptySlice`.
+// That would simplify alot of code. But it requires
+// unstable ZST casts and nightly in const contexts.
 /// A non-empty slice type, counterpart of `&[T]`.
 pub struct NonEmptySlice<'a, T: Sized> {
     pub(crate) inner: &'a [T],
