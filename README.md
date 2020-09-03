@@ -13,16 +13,15 @@ If you want `&[T]`, consider using `as_slice` or `as_mut_slice` methods.
 
 `NonEmptySlice` and `NonEmptyMutSlice`:
 
-* are borrow types (not owned type).
+* are borrowed types (not owned type).
 * are counterparts of `&[T]` and `&mut [T]`.
-* have same size and similar niche as `&[T]`
-* cannot be used without borrow contents from array, slice or `Vec`.
+* have same size and similar niche as `&[T]`.
+* cannot be used without borrowing contents from array, slice or `Vec`.
 
 `NonEmptyVec`:
 
-* is an owned types, counterparts of `Vec<T>`.
+* is an owned types, a counterpart of `Vec<T>`.
 * doesn't have `push` and `pop` methods, because those are fallible operations.
-  I had to deal with unsafe codes that I am not confident if I want to implement them.
 
 The differences from `&[T]` and `Vec<T>`:
 * `.len()` returns std's `NonZeroUsize`.
