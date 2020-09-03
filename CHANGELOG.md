@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `Removed` for now removed features.
 * `Fixed` for any bug fixes.
 * `Security` in case of vulnerabilities.
+
+# REMEMBER to update the link to the changes between versions.
 -->
 
 ## [v0.3.0] - 2020-09-02
