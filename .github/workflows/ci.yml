@@ -61,6 +61,8 @@ jobs:
       - name: Commit docs to gh-pages branch
         working-directory: target/doc
         run: |
+          # Bypassing Jekyll on GitHub Pages
+          touch .nojekyll
           REV=$(git rev-parse --short HEAD)
           git init
           git remote add upstream https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/lzutao/rust-oom
