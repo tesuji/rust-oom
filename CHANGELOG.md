@@ -38,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Fix multiple mutable aliases in `NonEmptyMutSlice::first_mut`. Thanks @HeroicKatora again.
 
-## [v0.2.0] - 2020-09-02
+## [v0.2.0] - 2020-09-02 (yanked)
 
 ### Breaking changes
 
