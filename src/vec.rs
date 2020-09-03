@@ -96,7 +96,9 @@ impl<T: Sized> NonEmptyVec<T> {
 
     /// Returns a non-empty mutable slice from this vec.
     pub fn as_nonempty_mut_slice(&mut self) -> NonEmptyMutSlice<'_, T> {
-        NonEmptyMutSlice { inner: &mut self.inner }
+        NonEmptyMutSlice {
+            inner: &mut self.inner,
+        }
     }
 
     /// Extracts a slice containing the entire vector.
