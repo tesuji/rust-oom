@@ -1,11 +1,20 @@
-error[E0107]: wrong number of lifetime arguments: expected 0, found 1
- --> $DIR/vec.rs:5:28
+error[E0597]: `vec` does not live long enough
+ --> $DIR/vec.rs:5:42
   |
-5 |     let bad: NonEmptySlice<'static, _> = vec.as_nonempty_slice();
-  |                            ^^^^^^^ unexpected lifetime argument
+5 |     let bad: &'static NonEmptySlice<_> = &vec;
+  |              -------------------------   ^^^^ borrowed value does not live long enough
+  |              |
+  |              type annotation requires that `vec` is borrowed for `'static`
+...
+8 | }
+  | - `vec` dropped here while still borrowed
 
-error[E0599]: no method named `as_nonempty_slice` found for struct `oom::NonEmptyVec<u8>` in the current scope
- --> $DIR/vec.rs:5:46
+error[E0505]: cannot move out of `vec` because it is borrowed
+ --> $DIR/vec.rs:6:10
   |
-5 |     let bad: NonEmptySlice<'static, _> = vec.as_nonempty_slice();
-  |                                              ^^^^^^^^^^^^^^^^^ method not found in `oom::NonEmptyVec<u8>`
+5 |     let bad: &'static NonEmptySlice<_> = &vec;
+  |              -------------------------   ---- borrow of `vec` occurs here
+  |              |
+  |              type annotation requires that `vec` is borrowed for `'static`
+6 |     drop(vec);
+  |          ^^^ move out of `vec` occurs here
