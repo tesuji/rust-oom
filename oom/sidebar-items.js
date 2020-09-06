@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["NonEmptyMutSlice","A non-empty mutable slice type, counterpart of `&mut [T]`."],["NonEmptySlice","A non-empty slice type, counterpart of `&[T]`."],["NonEmptyVec","A non-empty vector type, counterpart of `Vec<T>`."]]});

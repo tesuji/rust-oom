@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["oom"] = [{"text":"impl&lt;'a, T&gt; Freeze for NonEmptySlice&lt;'a, T&gt;","synthetic":true,"types":[]},{"text":"impl&lt;'a, T&gt; Freeze for NonEmptyMutSlice&lt;'a, T&gt;","synthetic":true,"types":[]},{"text":"impl&lt;T&gt; Freeze for NonEmptyVec&lt;T&gt;","synthetic":true,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

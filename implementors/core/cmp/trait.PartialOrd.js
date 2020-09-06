@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["oom"] = [{"text":"impl&lt;'a, T:&nbsp;PartialOrd&gt; PartialOrd&lt;NonEmptySlice&lt;'a, T&gt;&gt; for NonEmptySlice&lt;'a, T&gt;","synthetic":false,"types":[]},{"text":"impl&lt;'a, T:&nbsp;PartialOrd&gt; PartialOrd&lt;NonEmptyMutSlice&lt;'a, T&gt;&gt; for NonEmptyMutSlice&lt;'a, T&gt;","synthetic":false,"types":[]},{"text":"impl&lt;T:&nbsp;PartialOrd&gt; PartialOrd&lt;NonEmptyVec&lt;T&gt;&gt; for NonEmptyVec&lt;T&gt;","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
