@@ -2,11 +2,11 @@ extern crate alloc;
 
 use alloc::vec::Vec;
 use core::cmp::Ordering;
-use core::hint::unreachable_unchecked;
 use core::mem::size_of;
 use core::num::NonZeroUsize;
+use core::ops::{Deref, DerefMut};
 
-use crate::{NonEmptyMutSlice, NonEmptySlice};
+use crate::NonEmptySlice;
 
 /// A non-empty vector type, counterpart of `Vec<T>`.
 pub struct NonEmptyVec<T: Sized> {
@@ -55,6 +55,23 @@ const _BUILTIN_TRAITS: () = {
             self.as_slice()
         }
     }
+
+    impl<T> Deref for NonEmptyVec<T> {
+        type Target = NonEmptySlice<T>;
+        fn deref(&self) -> &Self::Target {
+            unsafe {
+                &*(&self.inner[..] as *const [T] as *const NonEmptySlice<T>)
+            }
+        }
+    }
+
+    impl<T> DerefMut for NonEmptyVec<T> {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            unsafe {
+                &mut *(&mut self.inner[..] as *mut [T] as *mut NonEmptySlice<T>)
+            }
+        }
+    }
 };
 
 impl<T: Sized> NonEmptyVec<T> {
@@ -87,18 +104,6 @@ impl<T: Sized> NonEmptyVec<T> {
     /// Returns an unsafe mutable pointer to the vector's buffer.
     pub fn as_mut_ptr(&mut self) -> *mut T {
         self.inner.as_mut_ptr()
-    }
-
-    /// Returns a non-empty slice from this vec.
-    pub fn as_nonempty_slice(&self) -> NonEmptySlice<'_, T> {
-        NonEmptySlice { inner: &self.inner }
-    }
-
-    /// Returns a non-empty mutable slice from this vec.
-    pub fn as_nonempty_mut_slice(&mut self) -> NonEmptyMutSlice<'_, T> {
-        NonEmptyMutSlice {
-            inner: &mut self.inner,
-        }
     }
 
     /// Extracts a slice containing the entire vector.
@@ -137,69 +142,5 @@ impl<T: Sized> NonEmptyVec<T> {
         T: Clone,
     {
         self.as_slice().to_vec()
-    }
-
-    /// Returns the first element of the slice.
-    pub fn first(&self) -> &T {
-        match self.as_slice() {
-            [first, ..] => first,
-            [] => unsafe { unreachable_unchecked() },
-        }
-    }
-
-    /// Returns a mutable pointer to the first element of the slice.
-    pub fn first_mut(&mut self) -> &mut T {
-        match self.as_mut_slice() {
-            [first, ..] => first,
-            [] => unsafe { unreachable_unchecked() },
-        }
-    }
-
-    /// Returns the last element of the slice.
-    pub fn last(&self) -> &T {
-        match self.as_slice() {
-            [.., last] => last,
-            [] => unsafe { unreachable_unchecked() },
-        }
-    }
-
-    /// Returns the last element of the slice.
-    pub fn last_mut(&mut self) -> &mut T {
-        match self.as_mut_slice() {
-            [.., last] => last,
-            [] => unsafe { unreachable_unchecked() },
-        }
-    }
-
-    /// Returns the first and all the rest of the elements of the slice.
-    pub fn split_first(&self) -> (&T, &[T]) {
-        match self.as_slice() {
-            [first, rest @ ..] => (first, rest),
-            [] => unsafe { unreachable_unchecked() },
-        }
-    }
-
-    /// Returns the first and all the rest of the elements of the slice.
-    pub fn split_first_mut(&mut self) -> (&mut T, &mut [T]) {
-        match self.as_mut_slice() {
-            [first, rest @ ..] => (first, rest),
-            [] => unsafe { unreachable_unchecked() },
-        }
-    }
-
-    /// Returns the last and all the rest of the elements of the slice.
-    pub fn split_last(&self) -> (&T, &[T]) {
-        match self.as_slice() {
-            [rest @ .., last] => (last, rest),
-            [] => unsafe { unreachable_unchecked() },
-        }
-    }
-
-    /// Returns the last and all the rest of the elements of the slice.
-    pub fn split_last_mut(&mut self) -> (&mut T, &mut [T]) {
-        match self.as_mut_slice() {
-            [rest @ .., last] => (last, rest),
-            [] => unsafe { unreachable_unchecked() },
-        }
     }
 }

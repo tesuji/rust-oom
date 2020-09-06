@@ -16,9 +16,7 @@ mod slice;
 mod vec;
 
 #[cfg(feature = "slice")]
-pub use slice::share::NonEmptySlice;
-#[cfg(feature = "slice")]
-pub use slice::unique::NonEmptyMutSlice;
+pub use slice::NonEmptySlice;
 
 #[cfg(feature = "vec")]
 pub use vec::NonEmptyVec;

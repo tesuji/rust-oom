@@ -1,8 +1,8 @@
 error[E0597]: `vec` does not live long enough
  --> $DIR/vec.rs:5:42
   |
-5 |     let bad: NonEmptySlice<'static, _> = vec.as_nonempty_slice();
-  |              -------------------------   ^^^ borrowed value does not live long enough
+5 |     let bad: &'static NonEmptySlice<_> = &vec;
+  |              -------------------------   ^^^^ borrowed value does not live long enough
   |              |
   |              type annotation requires that `vec` is borrowed for `'static`
 ...
@@ -12,8 +12,8 @@ error[E0597]: `vec` does not live long enough
 error[E0505]: cannot move out of `vec` because it is borrowed
  --> $DIR/vec.rs:6:10
   |
-5 |     let bad: NonEmptySlice<'static, _> = vec.as_nonempty_slice();
-  |              -------------------------   --- borrow of `vec` occurs here
+5 |     let bad: &'static NonEmptySlice<_> = &vec;
+  |              -------------------------   ---- borrow of `vec` occurs here
   |              |
   |              type annotation requires that `vec` is borrowed for `'static`
 6 |     drop(vec);

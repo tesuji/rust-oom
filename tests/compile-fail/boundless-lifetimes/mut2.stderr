@@ -1,4 +1,4 @@
-error[E0499]: cannot borrow `slice` as mutable more than once at a time
+error[E0499]: cannot borrow `*slice` as mutable more than once at a time
  --> $DIR/mut2.rs:5:18
   |
 4 |     let first = slice.first_mut();
