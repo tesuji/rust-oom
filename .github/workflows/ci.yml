@@ -65,14 +65,14 @@ jobs:
           touch .nojekyll
           REV=$(git rev-parse --short HEAD)
           git init
-          git remote add upstream https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/lzutao/rust-oom
           git config user.name "Actions"
-          git config user.email "Actions@example.com"
+          git config user.email ""
           git add -A .
           git commit -qm "Documentation for ${{github.repository}}@${REV}"
       - name: Push gh-pages to GitHub
         working-directory: target/doc
         run: |
+          git remote add upstream https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git push -q upstream HEAD:gh-pages --force
 
   rustfmt:
