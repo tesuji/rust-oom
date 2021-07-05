@@ -3,6 +3,8 @@ use core::hint::unreachable_unchecked;
 use core::mem::size_of;
 use core::num::NonZeroUsize;
 use core::slice;
+#[cfg(feature = "std")]
+use std::fmt;
 
 /// A non-empty mutable slice type, counterpart of `&mut [T]`.
 pub struct NonEmptyMutSlice<'a, T: Sized> {
@@ -43,6 +45,13 @@ const _BUILTIN_TRAITS: () = {
     impl<'a, T> AsRef<[T]> for NonEmptyMutSlice<'a, T> {
         fn as_ref(&self) -> &[T] {
             self.as_slice()
+        }
+    }
+
+    #[cfg(feature = "std")]
+    impl<'a, T: fmt::Debug> fmt::Debug for NonEmptyMutSlice<'a, T> {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+            fmt::Debug::fmt(self.as_slice(), f)
         }
     }
 };

@@ -10,6 +10,9 @@ More introduction is in the README.
 #![doc(html_root_url = "https://docs.rs/oom/0.3.0")]
 #![warn(rust_2018_idioms)]
 
+#[cfg(feature = "std")]
+extern crate std;
+
 #[cfg(feature = "slice")]
 mod slice;
 #[cfg(feature = "vec")]
