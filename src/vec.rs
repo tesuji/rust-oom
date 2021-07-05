@@ -5,6 +5,8 @@ use core::cmp::Ordering;
 use core::hint::unreachable_unchecked;
 use core::mem::size_of;
 use core::num::NonZeroUsize;
+#[cfg(feature = "std")]
+use std::fmt;
 
 use crate::{NonEmptyMutSlice, NonEmptySlice};
 
@@ -53,6 +55,13 @@ const _BUILTIN_TRAITS: () = {
     impl<T> AsRef<[T]> for NonEmptyVec<T> {
         fn as_ref(&self) -> &[T] {
             self.as_slice()
+        }
+    }
+
+    #[cfg(feature = "std")]
+    impl<T: fmt::Debug> fmt::Debug for NonEmptyVec<T> {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+            fmt::Debug::fmt(self.as_slice(), f)
         }
     }
 };

@@ -3,6 +3,8 @@ use core::hint::unreachable_unchecked;
 use core::mem::size_of;
 use core::num::NonZeroUsize;
 use core::slice;
+#[cfg(feature = "std")]
+use std::fmt;
 
 // FIXME: Use unsized `[T]` as inner type (see loaf crate)
 // and return `&NonEmptySlice` or `&mut NonEmptySlice`.
@@ -55,6 +57,13 @@ const _BUILTIN_TRAITS: () = {
     impl<'a, T> AsRef<[T]> for NonEmptySlice<'a, T> {
         fn as_ref(&self) -> &[T] {
             self.as_slice()
+        }
+    }
+
+    #[cfg(feature = "std")]
+    impl<'a, T: fmt::Debug> fmt::Debug for NonEmptySlice<'a, T> {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+            fmt::Debug::fmt(self.as_slice(), f)
         }
     }
 };
